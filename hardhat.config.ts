@@ -19,6 +19,9 @@ import "./tasks/confideo";
 
 const MNEMONIC: string = vars.get("MNEMONIC", "test test test test test test test test test test test junk");
 const INFURA_API_KEY: string = vars.get("INFURA_API_KEY", "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+// Prefer an explicit SEPOLIA_RPC_URL (e.g. a public node) so a deploy doesn't require an Infura key.
+const SEPOLIA_RPC_URL: string =
+  vars.get("SEPOLIA_RPC_URL", "") || `https://sepolia.infura.io/v3/${INFURA_API_KEY}`;
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
@@ -28,9 +31,8 @@ const config: HardhatUserConfig = {
     auditor: 2,
   },
   etherscan: {
-    apiKey: {
-      sepolia: vars.get("ETHERSCAN_API_KEY", ""),
-    },
+    // Single string => Etherscan V2 multichain endpoint (the per-network object form is V1, now deprecated).
+    apiKey: vars.get("ETHERSCAN_API_KEY", ""),
   },
   gasReporter: {
     currency: "USD",
@@ -60,7 +62,7 @@ const config: HardhatUserConfig = {
         count: 10,
       },
       chainId: 11155111,
-      url: `https://sepolia.infura.io/v3/${INFURA_API_KEY}`,
+      url: SEPOLIA_RPC_URL,
     },
   },
   paths: {
